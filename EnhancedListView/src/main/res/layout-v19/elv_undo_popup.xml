@@ -8,7 +8,6 @@
 
 	<TextView
 		android:id="@+id/text"
-		android:fontFamily="sans-serif-condensed"
 		android:textSize="16sp"
 		android:layout_weight="1"
 		android:ellipsize="end"
@@ -31,7 +30,6 @@
 
 	<Button
 		android:id="@+id/undo"
-		android:fontFamily="sans-serif-condensed"
 		android:textColor="@color/elv_popup_text_color"
 		android:background="@drawable/elv_undo_btn_bg"
 		android:layout_weight="0"

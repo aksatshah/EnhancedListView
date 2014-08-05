@@ -2,6 +2,5 @@ local.properties
 build/
 .gradle/
 .idea/
-*.iml
 *.ipr
 *.iws

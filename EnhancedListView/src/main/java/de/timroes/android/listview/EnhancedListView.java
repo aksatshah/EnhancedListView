@@ -934,11 +934,11 @@ public class EnhancedListView extends ListView {
 
         int rtlSign = 1;
         // On API level 17 and above, check if we are in a Right-To-Left layout
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if(getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                rtlSign = -1;
-            }
-        }
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//            if(getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+//                rtlSign = -1;
+//            }
+//        }
 
         // Check if swipe has been done in the correct direction
         switch(mSwipeDirection) {
