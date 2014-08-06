@@ -4,3 +4,4 @@ build/
 .idea/
 *.ipr
 *.iws
+gen/
