@@ -16,11 +16,14 @@
 package de.timroes.android.listview;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -298,7 +301,7 @@ public class EnhancedListView extends ListView {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == mValidDelayedMsgId) {
-            	discardUndo();
+                discardUndo();
             }
         }
     }
@@ -375,7 +378,7 @@ public class EnhancedListView extends ListView {
         }
         ViewConfiguration vc =ViewConfiguration.get(ctx);
         mSlop = getResources().getDimension(R.dimen.elv_touch_slop);
-		mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
+        mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
         mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
         mAnimationTime = ctx.getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -647,6 +650,16 @@ public class EnhancedListView extends ListView {
                     return super.onTouchEvent(ev);
                 }
 
+                float rawX = ev.getX();
+                float rawY = ev.getY();
+
+                Resources r = getResources();
+                float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, r.getDisplayMetrics());
+
+                if (rawX < px){
+                    return super.onTouchEvent(ev);
+                }
+
                 // TODO: ensure this is a finger, and set a flag
 
                 // Find the child view that was touched (perform a hit test)
@@ -682,12 +695,12 @@ public class EnhancedListView extends ListView {
                     // test if the item should be swiped
                     int position = getPositionForView(mSwipeDownView) - getHeaderViewsCount();
                     if ((mShouldSwipeCallback == null) ||
-                        mShouldSwipeCallback.onShouldSwipe(this, position)) {
-                    mDownX = ev.getRawX();
+                            mShouldSwipeCallback.onShouldSwipe(this, position)) {
+                        mDownX = ev.getRawX();
                         mDownPosition = position;
 
-                    mVelocityTracker = VelocityTracker.obtain();
-                    mVelocityTracker.addMovement(ev);
+                        mVelocityTracker = VelocityTracker.obtain();
+                        mVelocityTracker.addMovement(ev);
                     } else {
                         // set back to null to revert swiping
                         mSwipeDownView = mSwipeDownChild = null;
@@ -797,9 +810,20 @@ public class EnhancedListView extends ListView {
 
         final ViewGroup.LayoutParams lp = listItemView.getLayoutParams();
         final int originalLayoutHeight = lp.height;
+        ViewGroup list = (ViewGroup)dismissView.getParent();
+
+        ListView listView = (ListView)dismissView.getParent();
+        int lastPosition = listView.getAdapter().getCount();
 
         int originalHeight = listItemView.getHeight();
-        ValueAnimator animator = ValueAnimator.ofInt(originalHeight, 1).setDuration(mAnimationTime);
+
+        ValueAnimator animator;
+
+        if (dismissPosition == lastPosition){
+            animator = ValueAnimator.ofInt(originalHeight, originalHeight).setDuration(mAnimationTime);
+        }else{
+            animator = ValueAnimator.ofInt(originalHeight, 1).setDuration(mAnimationTime);
+        }
 
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -952,18 +976,18 @@ public class EnhancedListView extends ListView {
         }
 
     }
-    
+
     @Override
-	protected void onWindowVisibilityChanged(int visibility) {
-		super.onWindowVisibilityChanged(visibility);
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
 		
 		/*
 		 * If the container window no longer visiable,
 		 * dismiss visible undo popup window so it won't leak,
 		 * cos the container window will be destroyed before dismissing the popup window.
 		 */
-		if(visibility != View.VISIBLE) {
-			discardUndo();
-		}
-	}
+        if(visibility != View.VISIBLE) {
+            discardUndo();
+        }
+    }
 }
